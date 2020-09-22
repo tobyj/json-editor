@@ -329,7 +329,8 @@ export class AbstractEditor {
 
     /* Get mime type of the link */
     const mime = data.mediaType || 'application/javascript'
-    const type = mime.split('/')[0]
+    const mimeParts = mime.split('/');
+    const type = mimeParts[0];
 
     /* Template to generate the link href */
     const href = this.jsoneditor.compileTemplate(data.href, this.template_engine)
@@ -348,10 +349,14 @@ export class AbstractEditor {
       holder = this.theme.getBlockLinkHolder()
       link = document.createElement('a')
       link.setAttribute('target', '_blank')
-      const image = document.createElement('img')
-
+      
+      if (mimeParts.length === 2 && mimeParts[1] === 'svg+xml') {
+        const image = document.createElement('div')
+      } else {
+        const image = document.createElement('img')
+      }
       this.theme.createImageLink(holder, link, image)
-
+      
       /* When a watched field changes, update the url */
       this.link_watchers.push(vars => {
         const url = href(vars)
